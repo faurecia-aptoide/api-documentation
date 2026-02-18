@@ -115,7 +115,7 @@ Below is a list of currently documented endpoints. Additional endpoints may exis
 
 ## Endpoint example (Bash)
 
-### AndroidPublisher — oneTimeProducts:batchUpdate
+### AndroidPublisher - oneTimeProducts:batchUpdate
 
 **Method:** `POST`  
 **Path:** `/androidpublisher/v3/applications/{packageName}/oneTimeProducts:batchUpdate`  
@@ -136,7 +136,7 @@ This example:
 set -euo pipefail
 
 # --- Config ---
-BASE_URL="<base_url>"   # e.g., https://api.appning.com (replace with the correct base URL)
+BASE_URL="https://product.faa.faurecia-aptoide.com"
 SERVICE_ACCOUNT="./serviceAccount.json"
 
 PACKAGE_NAME="com.example.app"
