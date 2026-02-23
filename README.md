@@ -238,7 +238,73 @@ echo "✅ Done"
 Request processed successfully.
 
 ```json
-<success response body>
+[
+  {
+    "oneTimeProduct":{
+      "packageName":"com.example.android",
+      "productId":"coin_pack_200_11771861403",
+      "listings":[
+        {
+          "languageCode":"pt-BR",
+          "title":"300 Moedas",
+          "description":"Receba 100 moedas instantaneamente"
+        },
+        {
+          "languageCode":"en-US",
+          "title":"300 Coins",
+          "description":"Receive 100 coins instantly"
+        }
+      ],
+      "purchaseOptions":[
+        {
+          "purchaseOptionId":"default",
+          "buyOption":{
+            "legacyCompatible":true,
+            "multiQuantityEnabled":false
+          },
+          "regionalPricingAndAvailabilityConfigs":[
+            {
+              "regionCode":"US",
+              "price":{
+                "currencyCode":"USD",
+                "units":"1",
+                "nanos":880000000
+              },
+              "availability":"UNAVAILABLE"
+            },
+            {
+              "regionCode":"BR",
+              "price":{
+                "currencyCode":"BRL",
+                "units":"3",
+                "nanos":870000000
+              },
+              "availability":"UNAVAILABLE"
+            },
+            {
+              "regionCode":"MX",
+              "price":{
+                "currencyCode":"MXN",
+                "units":"2",
+                "nanos":860000000
+              },
+              "availability":"UNAVAILABLE"
+            }
+          ]
+        }
+      ],
+      "regionsVersion":{
+        "version":"2025\\/03"
+      }
+    },
+    "updateMask":"listings,purchaseOptions",
+    "allowMissing":true,
+    "latencyTolerance":"PRODUCT_UPDATE_LATENCY_TOLERANCE_LATENCY_TOLERANT",
+    "regionsVersion":{
+      "version":"2025\\/03"
+    }
+  }
+]
 ```
 
 ### 400 Bad Request
@@ -246,7 +312,24 @@ Request processed successfully.
 Invalid payload / validation failure.
 
 ```json
-<payload error response body>
+{
+  "error":{
+    "code":400,
+    "message":"An invalid value was given in the following body field: \\u201cbody\\u201d, with the following error: invalid request body.",
+    "errors":[
+      {
+        "message":{
+          "enduser":"Invalid request body.",
+          "technical":"Invalid request body."
+        },
+        "domain":"global",
+        "reason":"badRequest",
+        "location":"body"
+      }
+    ],
+    "status":"INVALID_ARGUMENT"
+  }
+}
 ```
 
 Typical causes:
@@ -259,7 +342,20 @@ Typical causes:
 Authentication failure / invalid token.
 
 ```json
-<unauthorized response body>
+{
+  "error":{
+    "code":401,
+    "message":"The given authentication credentials, to access the targeted resource, are invalid.",
+    "errors":[
+      {
+        "message":"The given authentication credentials, to access the targeted resource, are invalid.",
+        "domain":"global",
+        "reason":"required"
+      }
+    ],
+    "status":"UNAUTHENTICATED"
+  }
+}
 ```
 
 Typical causes:
@@ -279,17 +375,56 @@ Typical causes:
 Token is valid, but the caller lacks permission to perform this operation.
 
 ```json
-<forbidden response body>
+{
+  "error":{
+    "code":403,
+    "message":"Access to the targeted resource is forbidden.",
+    "errors":[
+      {
+        "message":"Access to the targeted resource is forbidden.",
+        "domain":"global",
+        "reason":"accessNotConfigured"
+      }
+    ],
+    "status":"PERMISSION_DENIED"
+  }
+}
 ```
 
 Typical causes:
 - the client identified by `iss/sub` is not authorized for this endpoint
 - the endpoint requires a different access level
 
+### 404 Not Found
+
+The resource was not found
+
+```json
+{
+  "error":{
+    "code":404,
+    "message":"The targeted resource was not found.",
+    "errors":[
+      {
+        "message":"The targeted resource was not found.",
+        "domain":"global",
+        "reason":"notFound"
+      }
+    ],
+    "status":"NOT_FOUND"
+  }
+}
+```
+Typical causes:
+- the package is not available to receive monetization products
+- the package does not exist under the supplied service account credentials
+
 ---
 
 ## Troubleshooting
 
+- **400**
+  - validate the request body against the endpoint’s expected schema
 - **401: invalid signature**
   - confirm `kid` matches the public key registered for your credentials
   - confirm the private key used to sign matches the server-side public key
@@ -301,5 +436,5 @@ Typical causes:
   - ensure system clock is correct (NTP) and server clock-skew tolerance is set
 - **403**
   - confirm the permissions associated with your `clientId`
-- **400**
-  - validate the request body against the endpoint’s expected schema
+- **404**
+  - confirm the package name settings via https://developers.appning.com
