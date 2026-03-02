@@ -55,9 +55,9 @@ The server **only accepts tokens with a maximum validity of 15 minutes**:
 
 Below is a list of currently documented endpoints. Additional endpoints may exist depending on the services enabled for your account.
 
-| Service | Method | Endpoint | Description | Documentation
-|---|---|---|---|-|
-| AndroidPublisher | POST | `/androidpublisher/v3/applications/{packageName}/oneTimeProducts:batchUpdate` | Batch create/update one-time products (monetization) | https://developers.google.com/android-publisher/api-ref/rest/v3/monetization.onetimeproducts/batchUpdate|
+| Service | Method | Endpoint | Description | Documentation                                                                                                                                                                                                                       
+|---|---|---|---|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| AndroidPublisher | POST | `/androidpublisher/v3/applications/{packageName}/oneTimeProducts:batchUpdate` | Batch create/update one-time products (monetization) | <a href="https://github.com/faurecia-aptoide/api-documentation/blob/main/docs/appning/android-publisher/monetization.onetimeproducts/batchUpdate.md">android-publisher/monetization.onetimeproducts/batchUpdate.md</a> |
 
 ---
 
@@ -65,16 +65,10 @@ Below is a list of currently documented endpoints. Additional endpoints may exis
 
 The following script loads `serviceAccount.json`, generates a JWT, and calls the endpoint with `curl`. Use it to quickly test the API from your local machine.
 
-Run with defaults:
+Run by passing your own service account and package name as arguments:
 
 ```bash
-./test-endpoint.sh
-```
-
-Or pass your own service account and package name as arguments:
-
-```bash
-./test-endpoint.sh ./serviceAccount-<kid>.json com.your.package
+sh test-endpoint.sh ./serviceAccount-<kid>.json com.your.package
 ```
 
 **Requirements:** `jq`, `openssl`, `curl`
