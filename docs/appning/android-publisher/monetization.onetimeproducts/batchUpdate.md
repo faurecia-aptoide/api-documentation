@@ -9,7 +9,7 @@ Creates or updates one or more one-time products.
 ## HTTP request
 
 - Method: `POST`
-- URL: `https://androidpublisher.googleapis.com/androidpublisher/v3/applications/{packageName}/oneTimeProducts:batchUpdate`
+- URL: `https://product.faa.faurecia-aptoide.com/api/8.20240517/androidpublisher/v3/applications/{packageName}/oneTimeProducts:batchUpdate`
 - URL syntax follows gRPC transcoding.
 
 ## Path parameters
