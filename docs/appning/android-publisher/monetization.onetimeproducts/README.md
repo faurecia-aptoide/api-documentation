@@ -1,4 +1,4 @@
-# Google Play Developer API - `monetization.onetimeproducts.batchUpdate`
+# Appning Developer API - `monetization.onetimeproducts.batchUpdate`
 
 Adapted from:
 

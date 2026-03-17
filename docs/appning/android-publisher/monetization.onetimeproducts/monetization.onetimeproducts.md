@@ -127,7 +127,7 @@ Fields:
 ```
 
 - `legacyCompatible` (`boolean`, optional):
-  - Exposes this option in legacy Google Play Billing Library (PBL) flows that do not support the one-time products model.
+  - Exposes this option in legacy PBL flows that do not support the one-time products model.
   - At most one buy option can be legacy compatible.
 - `multiQuantityEnabled` (`boolean`, optional): allows purchasing multiple units in a single checkout.
 
