@@ -14,3 +14,4 @@ spec:
   # escalationContact:          # TODO (REQUIRED): a team alias / rotation — never a person
   # dataSensitivity:            # TODO (REQUIRED): none | internal | sensitive — guide: docs/guides/data-sensitivity.md
   project: payments          # org extension — declared project membership
+  architectureDoc: README.md   # FALLBACK — the README stands in; replace when a real one lands
