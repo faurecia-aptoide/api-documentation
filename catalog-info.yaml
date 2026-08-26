@@ -12,6 +12,7 @@ spec:
   lifecycle: active  # GUESS from activity — verify
   # owner:                      # TODO (REQUIRED): the owning TEAM (never a person)
   # escalationContact:          # TODO (REQUIRED): a team alias / rotation — never a person
-  # dataSensitivity:            # TODO (REQUIRED): none | internal | sensitive — guide: docs/guides/data-sensitivity.md
+  # dataSensitivity:            # TODO (REQUIRED): public | internal | confidential | restricted — guide: docs/guides/data-sensitivity.md
+  # personalData:               # optional (GDPR): none | personal | special-category
   project: payments          # org extension — declared project membership
   architectureDoc: README.md   # FALLBACK — the README stands in; replace when a real one lands
