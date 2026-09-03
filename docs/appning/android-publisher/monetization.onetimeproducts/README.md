@@ -22,6 +22,7 @@ Adapted from:
 - [`offers/deactivate.md`](./offers/deactivate.md)
 - [`offers/batchUpdateStates.md`](./offers/batchUpdateStates.md)
 - [`offers/batchDelete.md`](./offers/batchDelete.md)
+- [`offers/offer-token-flow.md`](./offers/offer-token-flow.md): using `offer_token`
 
 ## Purchase option endpoints (seller management surface)
 

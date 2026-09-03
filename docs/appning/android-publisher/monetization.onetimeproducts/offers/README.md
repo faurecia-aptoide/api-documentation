@@ -25,6 +25,7 @@ The endpoints below **read** offers and **change their state**. There is no sepa
 - [`deactivate.md`](./deactivate.md): `offers:deactivate`
 - [`batchUpdateStates.md`](./batchUpdateStates.md): `offers:batchUpdateStates`
 - [`batchDelete.md`](./batchDelete.md): `offers:batchDelete`
+- [`offer-token-flow.md`](./offer-token-flow.md): using `offer_token`, and the rules for resolving a price
 
 ## Not implemented
 

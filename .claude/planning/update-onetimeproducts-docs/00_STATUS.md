@@ -8,14 +8,14 @@
 - [x] Research - Completed
 - [x] Design - Completed
 - [x] Planning - Completed
-- [~] Implementation - In Progress (Phase 6/8)
+- [~] Implementation - In Progress (Phase 7/8)
   - Phase 1 Conventions + harness: ✓ Complete
   - Phase 2 Type pages: ✓ Complete (8 pages, 31 ledger rows)
   - Phase 3 v3 surface: ✓ Complete (2 pages patched, 47 ledger rows)
   - Phase 4 Offer resource + reads: ✓ Complete
   - Phase 5 Offer lifecycle writes: ✓ Complete (committed together — the offers index inherently lists both, 24 ledger rows)
   - Phase 6 Purchase-option states: ✓ Complete (3 pages, 15 ledger rows)
-  - Phase 7 offer_token flow: ⏳ Not started
+  - Phase 7 offer_token flow: ✓ Complete (1 page + EEA section, 18 ledger rows)
   - Phase 8 Verification + closure: ⏳ Not started
 - [ ] Review - Not started
 - [ ] Security - Not started

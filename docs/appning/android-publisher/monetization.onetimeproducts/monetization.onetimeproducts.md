@@ -286,7 +286,7 @@ An offer never carries a price. It carries a **modifier** applied to the purchas
 - `endTime` (`string`, optional): RFC 3339 timestamp. **Exclusive**, and must be later than `startTime`.
 - `redemptionLimit` (`integer`, optional): `0` for unlimited, otherwise `1` to `50`.
   - The range is checked when you write the offer. The count is enforced per buyer at purchase time: a buyer at the cap is refused with `403`.
-  - It is a merchandising control, not a security control.
+  - It is a merchandising control, not a security control. See [`offers/offer-token-flow.md`](./offers/offer-token-flow.md).
 
 An offer with no `startTime` and no `endTime` has no schedule bound and is always inside its window. Being inside the window is only one of the two conditions for being sellable — see [`types/offer-state.md`](./types/offer-state.md).
 
@@ -321,6 +321,14 @@ Only one of noOverride, relativeDiscount or absoluteDiscount may be set; got X a
 ```
 
 On a read, each entry additionally returns `pricing_variant`, `base_price` and `resolved_price`, so a client does not compute the discount itself. See [`types/resolved-price.md`](./types/resolved-price.md).
+
+## Displaying a discounted price in the EEA
+
+**Your client must apply this.** Nothing in the service enforces it.
+
+In the European Economic Area, a buyer must be shown **only the discounted price**, with no strikethrough of the original. Both `base_price` and `resolved_price` are returned on every region so that a seller-facing surface can show what each region pays, but a buyer-facing surface in an affected region must present `resolved_price` alone.
+
+Which regions are affected depends on the purchase option's `withdrawalRightType`: one list applies to digital content, another to digital services. See [`types/withdrawal-right-type.md`](./types/withdrawal-right-type.md).
 
 ## Where the base price lives
 
