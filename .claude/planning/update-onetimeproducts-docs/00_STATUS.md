@@ -102,6 +102,10 @@ Still outstanding, and asked on the ticket: the deployed flag values, whether th
 
 **Key constraint carried through every phase:** index updates ship in the same commit as the pages they list, and no existing file is ever moved — portal URLs mirror file paths.
 
+## Follow-up raised
+
+**PAY-1930** — `web-product-service-laravel`: correct nine in-repo docs that contradict their own code. 15 sites in 7 groups, each cited at `c4dd77a` and re-verified at filing time. Linked to PAY-1889 as related; does not block it. Includes two process suggestions beyond the cleanup: extend the console OpenAPI drift guard to schema shape (which is why group F survived it), and prefer a pointer over a paraphrase in docblocks.
+
 ## Artifacts
 - 01_DISCOVERY.md
 - 02_CODE_RESEARCH.md
