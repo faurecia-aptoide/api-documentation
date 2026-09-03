@@ -9,6 +9,7 @@
 - [x] Design - Completed
 - [x] Planning - Completed
 - [x] Implementation - Completed (20 new pages, 4 modified, 135 verified claims, 6 commits)
+- [~] Review - NEEDS REVISION (1 critical, 4 important, 3 suggestions — see 06_CODE_REVIEW.md)
   - Phase 1 Conventions + harness: ✓ Complete
   - Phase 2 Type pages: ✓ Complete (8 pages, 31 ledger rows)
   - Phase 3 v3 surface: ✓ Complete (2 pages patched, 47 ledger rows)
@@ -36,7 +37,6 @@
 2. Remove the `offer_token` status line once a broker forwards the token.
 3. No worked example of a full `offers[]` write payload. The repository's convention is placeholder JSON, so this is consistent rather than a gap, but an example page would help an integrator.
 4. Offer to fix the nine stale prose claims in the source repository (separate ticket).
-- [ ] Review - Not started
 - [ ] Security - Not started
 - [ ] Deploy - Not started
 - [ ] Observe - Not started
