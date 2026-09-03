@@ -10,6 +10,7 @@ Adapted from:
 - [`monetization.onetimeproducts.md`](./monetization.onetimeproducts.md): `OneTimeProduct` resource and nested types
 - [`types/`](./types/): external schemas and enums referenced by the method/resource
 - [`offers/`](./offers/): the offer resource and its lifecycle endpoints, on the seller management surface
+- [`purchase-options/`](./purchase-options/): purchase option state transitions and deletion, on the seller management surface
 
 ## Offer endpoints (seller management surface)
 
@@ -21,6 +22,12 @@ Adapted from:
 - [`offers/deactivate.md`](./offers/deactivate.md)
 - [`offers/batchUpdateStates.md`](./offers/batchUpdateStates.md)
 - [`offers/batchDelete.md`](./offers/batchDelete.md)
+
+## Purchase option endpoints (seller management surface)
+
+- [`purchase-options/README.md`](./purchase-options/README.md): surface overview
+- [`purchase-options/batchUpdateStates.md`](./purchase-options/batchUpdateStates.md)
+- [`purchase-options/batchDelete.md`](./purchase-options/batchDelete.md)
 
 ## Covered sub-links
 

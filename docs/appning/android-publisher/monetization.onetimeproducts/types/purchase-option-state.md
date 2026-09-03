@@ -42,3 +42,5 @@ A purchase option is offered to a buyer only when its state is `ACTIVE` **and** 
 ## Local references
 
 - [`../monetization.onetimeproducts.md`](../monetization.onetimeproducts.md)
+- [`../purchase-options/batchUpdateStates.md`](../purchase-options/batchUpdateStates.md)
+- [`../purchase-options/batchDelete.md`](../purchase-options/batchDelete.md)

@@ -128,7 +128,7 @@ The rejection is triggered by the presence of the key, whatever its value. Sendi
 
 ### `state` on a write
 
-`state` is output only. On this surface it is accepted and ignored; on the seller management surface it is rejected with `400`. Use the state endpoints to change it — see the purchase-option state endpoint page.
+`state` is output only. On this surface it is accepted and ignored; on the seller management surface it is rejected with `400`. Use the state endpoints to change it — see [`purchase-options/batchUpdateStates.md`](./purchase-options/batchUpdateStates.md).
 
 ### Enum `State`
 
