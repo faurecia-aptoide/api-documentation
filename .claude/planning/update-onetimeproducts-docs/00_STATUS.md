@@ -1,0 +1,85 @@
+# Status: update-onetimeproducts-docs
+
+**Risk:** Medium | **Updated:** 2026-09-03T15:05:00Z
+**Stack:** Markdown documentation (no runtime code) — source of truth lives in a separate repo, `web-product-service-laravel` (PHP / Laravel), branch `origin/staging`
+
+## Progress
+- [x] Discovery - Completed
+- [x] Research - Completed
+- [x] Design - Completed
+- [x] Planning - Completed
+- [ ] Implementation - Not started
+- [ ] Review - Not started
+- [ ] Security - Not started
+- [ ] Deploy - Not started
+- [ ] Observe - Not started
+- [ ] Retro - Not started
+
+## Detected Stack
+Documentation-only repository (Markdown + one Bash smoke-test script). No linter, formatter, test runner, or CI configured. No code-specific expert applies; the work is cross-checking documentation claims against PHP source in a sibling repository.
+
+## Applicable Expert Commands
+- `/language/software-engineer-pro` — fallback, for page-structure and consistency judgment calls only
+
+## Key Decisions
+- **Source-of-truth branch is `web-product-service-laravel` `origin/staging` (tip `c4dd77a`), not `main`.** `main` (`9fe6ed6`) is 353 commits behind and contains none of this feature set.
+- A read-only git worktree of `origin/staging` was created for research at
+  `/private/tmp/claude-501/-Users-carlossouza-Projects-product-cluster-api-documentation/a5c2d687-646a-4b9c-8703-7371bd38dc05/scratchpad/wps-staging`.
+  It is registered in the source repo's worktree list. Keep it for Design and Implementation; remove with `git worktree remove` when the ticket closes.
+- **Two of the ticket's three substantive claims are wrong** (verified in code):
+  - `purchaseOptions[].type` is **rejected on key presence**, not accepted-and-conflicting (ADR-0135). The described asymmetry no longer exists in either direction, and the ticket's line citation points at the wrong section.
+  - `redemptionLimit` **is enforced**, at purchase time, as of the branch-tip commit. It is dormant behind two gates and is explicitly not a security control. `newRegionsConfig` and `multiQuantityEnabled` do hold up as stored-only.
+  - The caps claim (100/100/400/50) is **confirmed**.
+- **The three big caps are ours, not Google's**, and the code carries an explicit warning not to cite them as Google limits — this repo has already shipped a validator that rejected input Google accepts for exactly that reason (ADR-0134). Provenance labelling is therefore a required design element.
+- **There are two API surfaces.** The documented `:batchUpdate` is on `/androidpublisher/v3/...` with Google's error envelope; every endpoint the ticket asks for is seller-scoped under `/sellers/{uid}/...` with a different envelope, `seller.acl` scoping and numbered-page pagination. Pages must separate them.
+- **The existing "six methods not implemented" list is surface-dependent, not simply wrong.** It stays true for the v3 surface. Rewriting it without naming the surface would replace one inaccuracy with another.
+- **No portal change is needed.** `appning-documentation` serves this repo's Markdown at request time from a git-ignored directory populated at deploy. Filenames become navigation labels; the file tree becomes the URL tree.
+- **Neither OpenAPI spec is usable as a source** — four verified schema drifts, with prose and schema disagreeing inside the same file.
+- **In-repo prose lags its own code, repeatedly** — nine stale claims found across architecture notes, docblocks, route comments and both specs. Cite the parser, enum, route or migration; never an ADR or docblock.
+
+## Design Decisions (ADRs)
+- **ADR-001 — Page structure by surface, additive.** Directory per surface (`offers/`, `purchase-options/`), one page per endpoint, surface preamble on every page. **No existing file is moved** — portal URLs mirror file paths, so a rename breaks live links and the root endpoint table.
+- **ADR-002 — Provenance and enforcement markers.** Four-value provenance vocabulary (unmarked = Google's / **Appning** / **Appning, stricter** / **Accepted, not enforced**) plus a per-method enforcement table. Carries the "stored but not enforced" criterion and prevents citing our caps as Google's.
+- **ADR-003 — Availability status instead of omit-or-publish.** Resolves the feature-flag blocker architecturally: each endpoint page states "generally available" or "limited availability" with a 404 explanation, so the page is correct whether or not the flags are on. Default is limited availability. No flag names published.
+- **ADR-004 — Keep the "not implemented" list, scoped per surface.** It is unscoped rather than wrong: still true for v3, while four of six are implemented on the Console surface. Retitle, split into "available on the seller surface" (cross-linked) and "not implemented anywhere" (with reasons). The only edit to audit-certified text — called out deliberately.
+- **ADR-005 — Verify against code, publish no internal identifiers.** Facts go in pages; `file:line` citations go in an internal `04_CLAIM_LEDGER.md` that is never deployed. Audience is external, and line numbers rot faster than facts.
+- **ADR-006 — Document `offer_token` as a defined contract, in exact tense.** "What it is" in plain present tense (all observably true); "how it is used" as the defined contract with one status line noting no broker forwards it yet. Publishes the client rules that prevent a 100× mis-pricing.
+
+## Resolved Since Research
+1. ~~Console endpoints and the feature flags~~ → resolved by ADR-003; still worth confirming the deployed values to flip the markers.
+2. ~~"Not implemented" list~~ → resolved by ADR-004.
+3. ~~`offer_token` tense~~ → resolved by ADR-006.
+
+Still outstanding, and asked on the ticket: the deployed flag values, whether the broker PR merged, and the two cited audit artefacts. None of them block Planning.
+
+## Plan Summary
+**8 phases, effort M.** One commit per phase. Ordering is interface-first: conventions and check scripts, then leaf type pages, then the pages that reference them, then verification.
+
+| Phase | Milestone |
+|---|---|
+| 1 | Conventions + 3 check scripts (link, leakage, index parity); ledger opened with the 3 rejected ticket claims. No published change |
+| 2 | 8 new `types/` pages — leaf contracts everything else links to |
+| 3 | **v3 surface: the eleven caps, unknown-key rejection, `updateMask`, pricing union, ADR-004 list rewrite.** Highest value; shippable alone |
+| 4 | Console surface opens: offer resource + `list` / `batchGet` |
+| 5 | Offer lifecycle writes: `:activate`, `:deactivate`, `:batchUpdateStates`, `:batchDelete` |
+| 6 | Purchase-option `:batchUpdateStates` (both variants) + `:batchDelete` |
+| 7 | `offer_token` integration contract, `redemptionLimit` end to end, EEA obligation |
+| 8 | Mechanical verification, 10-number spot re-verify, ticket closure |
+
+**Revert boundaries:** Phases 4-7 together restore a coherent v3-only document. Phase 5 must not be reverted while Phase 4 stands (its index would list missing pages). Phase 3's not-implemented list cross-links into Phases 4-7 — the one cross-phase coupling, caught by the link check.
+
+**Key constraint carried through every phase:** index updates ship in the same commit as the pages they list, and no existing file is ever moved — portal URLs mirror file paths.
+
+## Artifacts
+- 01_DISCOVERY.md
+- 02_CODE_RESEARCH.md
+- 03_ARCHITECTURE.md
+- 03_ADR-001-page-structure-by-surface.md
+- 03_ADR-002-provenance-and-enforcement-markers.md
+- 03_ADR-003-availability-status-over-omit-or-publish.md
+- 03_ADR-004-scope-not-implemented-list-per-surface.md
+- 03_ADR-005-no-internal-identifiers-in-published-pages.md
+- 03_ADR-006-document-offer-token-as-defined-contract.md
+- 03_PROJECT_SPEC.md
+- 04_IMPLEMENTATION_PLAN.md
+- 04_CLAIM_LEDGER.md, 04_PAGE_CONVENTIONS.md, scripts/ — **created in Phase 1 of Implementation**
