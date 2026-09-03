@@ -9,6 +9,26 @@ Adapted from:
 - [`batchUpdate.md`](./batchUpdate.md): main method `monetization.onetimeproducts.batchUpdate`
 - [`monetization.onetimeproducts.md`](./monetization.onetimeproducts.md): `OneTimeProduct` resource and nested types
 - [`types/`](./types/): external schemas and enums referenced by the method/resource
+- [`offers/`](./offers/): the offer resource and its lifecycle endpoints, on the seller management surface
+- [`purchase-options/`](./purchase-options/): purchase option state transitions and deletion, on the seller management surface
+
+## Offer endpoints (seller management surface)
+
+- [`offers/README.md`](./offers/README.md): surface overview
+- [`offers/offers.md`](./offers/offers.md): the `OneTimeProductOffer` resource
+- [`offers/list.md`](./offers/list.md)
+- [`offers/batchGet.md`](./offers/batchGet.md)
+- [`offers/activate.md`](./offers/activate.md)
+- [`offers/deactivate.md`](./offers/deactivate.md)
+- [`offers/batchUpdateStates.md`](./offers/batchUpdateStates.md)
+- [`offers/batchDelete.md`](./offers/batchDelete.md)
+- [`offers/offer-token-flow.md`](./offers/offer-token-flow.md): using `offer_token`
+
+## Purchase option endpoints (seller management surface)
+
+- [`purchase-options/README.md`](./purchase-options/README.md): surface overview
+- [`purchase-options/batchUpdateStates.md`](./purchase-options/batchUpdateStates.md)
+- [`purchase-options/batchDelete.md`](./purchase-options/batchDelete.md)
 
 ## Covered sub-links
 
@@ -22,6 +42,14 @@ Adapted from:
 - [`WithdrawalRightType`](./types/withdrawal-right-type.md)
 - [`TaxTier`](./types/tax-tier.md)
 - [`StreamingTaxType`](./types/streaming-tax-type.md)
+- [`OfferState`](./types/offer-state.md)
+- [`PurchaseOptionState`](./types/purchase-option-state.md)
+- [`OfferAvailability`](./types/offer-availability.md)
+- [`OfferPricingVariant`](./types/offer-pricing-variant.md)
+- [`relativeDiscount`](./types/relative-discount.md)
+- [`absoluteDiscount`](./types/absolute-discount.md)
+- [`resolved price`](./types/resolved-price.md)
+- [`offer_token`](./types/offer-token.md)
 
 ## Note
 
