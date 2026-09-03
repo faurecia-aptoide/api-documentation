@@ -22,6 +22,14 @@ Adapted from:
 - [`WithdrawalRightType`](./types/withdrawal-right-type.md)
 - [`TaxTier`](./types/tax-tier.md)
 - [`StreamingTaxType`](./types/streaming-tax-type.md)
+- [`OfferState`](./types/offer-state.md)
+- [`PurchaseOptionState`](./types/purchase-option-state.md)
+- [`OfferAvailability`](./types/offer-availability.md)
+- [`OfferPricingVariant`](./types/offer-pricing-variant.md)
+- [`relativeDiscount`](./types/relative-discount.md)
+- [`absoluteDiscount`](./types/absolute-discount.md)
+- [`resolved price`](./types/resolved-price.md)
+- [`offer_token`](./types/offer-token.md)
 
 ## Note
 
