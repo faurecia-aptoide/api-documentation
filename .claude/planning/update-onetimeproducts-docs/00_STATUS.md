@@ -10,6 +10,7 @@
 - [x] Planning - Completed
 - [x] Implementation - Completed (20 new pages, 4 modified, 135 verified claims, 6 commits)
 - [x] Review - APPROVED after fixes (1 critical + 4 important resolved; C3 found and fixed during the fix pass; all 3 recommendations closed)
+- [x] Types-page audit - Completed (8 of 8 pages had findings — see 06_TYPES_PAGES_AUDIT.md)
   - Phase 1 Conventions + harness: ✓ Complete
   - Phase 2 Type pages: ✓ Complete (8 pages, 31 ledger rows)
   - Phase 3 v3 surface: ✓ Complete (2 pages patched, 47 ledger rows)

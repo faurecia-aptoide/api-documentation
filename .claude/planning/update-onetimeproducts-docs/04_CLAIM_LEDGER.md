@@ -207,8 +207,29 @@ One row per published cap, enum vocabulary, bound, formula, status code and erro
 | R-07 | `batchUpdate.md` | The flat `discount` block cannot be combined with `offers[]` — 400, with the message naming `offers[]` as the survivor | **Appning** | write time | `app/Dto/Internal/AndroidPublisher/BatchUpdateItem.php:903-910` | `verified` |
 | R-08 | `batchUpdate.md` | Writing `offers[]` clears any stored flat `discount`, `fullPriceMicros` and `timeWindow` on that option | **Appning** | write time | `app/Services/AndroidPublisher/BatchUpdateService.php:876-882` | `verified` |
 | R-09 | `types/offer-state.md` | An offer carrying the legacy `timeWindow` must satisfy that window too; an offer authored through `offers[]` never carries one | **Appning** | read time | `app/Models/Offer.php:126-153`; `BatchUpdateService.php:766`, `:881` | `verified` |
+| T-01 | `types/restricted-payment-countries.md` | `restrictedPaymentCountries` is accepted in a body and ignored; nothing parses, stores or serves it; naming it in `updateMask` is a 400 | accepted-not-enforced | not enforced | `app/Dto/Internal/AndroidPublisher/BatchUpdateItem.php:545-548`, `:2722-2727`; no occurrence of the nested fields anywhere in `app/` | `verified` |
+| T-02 | `types/tax-tier.md`, `types/streaming-tax-type.md`, `types/regional-product-age-rating-info.md` | Product-level `taxAndComplianceSettings` is not implemented: `regionalTaxConfigs`, `productTaxCategoryCode`, `isTokenizedDigitalAsset`, `regionalProductAgeRatingInfos` appear nowhere in `app/`; the root is rejected in `updateMask` | accepted-not-enforced | not enforced | `BatchUpdateItem.php:545-548`, `:526-537`; repository-wide grep for the four field names | `verified` |
+| T-03 | tax pages | The **purchase-option-level** `taxAndComplianceSettings.withdrawalRightType` is a different field and **is** implemented | Google | write time | `BatchUpdateItem.php:277-279`; `app/Enums/WithdrawalRightType.php:30-36` | `verified` |
+| T-04 | `types/money.md` | This service accepts no negative amount: `nanos` in `[0, 1000000000)`, `units` not negative | **Appning-stricter** | write time | `app/Dto/Internal/AndroidPublisher/Money.php:29-33`; `BatchUpdateItem.php:847-855` | `verified` |
+| T-05 | `types/money.md` | A price of exactly zero is rejected; a discount of zero is accepted and means no reduction | Google | write time | `BatchUpdateItem.php:857-860`; `app/Services/AndroidPublisher/BatchUpdateService.php:942-949` | `verified` |
+| T-06 | `types/product-update-latency-tolerance.md` | Only `…UNSPECIFIED` and `…LATENCY_TOLERANT` are accepted; `…LATENCY_SENSITIVE` is rejected with 400 | **Appning** (narrower) | write time | `BatchUpdateItem.php:44-47`, `:967-974` | `verified` |
+| T-07 | `types/product-update-latency-tolerance.md` | An absent or unspecified value stays `…UNSPECIFIED`; it does **not** fall through to `…LATENCY_SENSITIVE` as Google documents | **Appning** | write time | `BatchUpdateItem.php:56` | `verified` |
+| T-08 | `types/product-update-latency-tolerance.md` | The 7,200 / 720,000-per-hour figures are Google's own, not measurements of this service | Google | n/a | Google reference, quoted on the page; no equivalent figure exists in this repository | `verified` |
+| T-09 | `types/offer-tag.md` | Enforced as `^[a-z0-9-]{1,20}$`, with the quoted error message | Google | write time | `BatchUpdateItem.php:173-175` | `verified` |
+| T-10 | `types/offer-tag.md` | A leading hyphen is accepted, deliberately, despite RFC-1034 forbidding one | **Appning** | write time | `BatchUpdateItem.php:160-172` | `verified` |
+| T-11 | `types/offer-tag.md` | Tag content was unvalidated before 2026-08-18, so older stored tags may violate the current rule | **Appning** | n/a | `BatchUpdateItem.php:154-158` | `verified` |
+| T-12 | `types/offer-tag.md` | 20 per level at three levels, counted after de-duplication | Google (cap), **Appning** (de-dup) | write time | `BatchUpdateItem.php:124`, `:71-75`, `:1191-1198`, `:2108-2115` | `verified` |
+| T-13 | `types/regions-version.md` | `regionsVersion.version` is required and must be non-blank | Google | write time | `BatchUpdateItem.php:976-981` | `verified` |
+| T-14 | `types/regions-version.md` | The value is otherwise unvalidated — any non-empty string is accepted — and the write path neither stores nor echoes it | **Appning** | not enforced | `BatchUpdateItem.php:976-981`; no `regionsVersion` write in `BatchUpdateService.php` | `verified` |
+| T-15 | `types/regions-version.md` | `regionsVersion` is immutable: naming it in `updateMask` is a 400 | Google | write time | `BatchUpdateItem.php:558-562`, `:2713-2717` | `verified` |
 
 ---
+
+## Coverage
+
+Every page in `docs/appning/android-publisher/monetization.onetimeproducts/` now has ledger rows. The eight `types/` pages this ticket did not originally touch were audited separately on 2026-09-03 — see `06_TYPES_PAGES_AUDIT.md`. Findings in 8 of 8.
+
+**Rule going forward: a page with no ledger rows is unverified, not verified-by-silence.**
 
 ## Known documentation gaps, recorded rather than left implicit
 
