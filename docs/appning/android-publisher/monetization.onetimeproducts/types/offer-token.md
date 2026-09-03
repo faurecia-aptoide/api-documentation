@@ -36,7 +36,7 @@ An opaque string naming one offer, on one purchase option, of one one-time produ
 
 ## Using it
 
-See `offer-token-flow` for what a client does with the token, including the rules for reading a price correctly.
+See [`offer-token-flow.md`](../offers/offer-token-flow.md) for what a client does with the token, including the rules for reading a price correctly.
 
 ## Local references
 

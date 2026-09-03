@@ -328,13 +328,22 @@ Only one of noOverride, relativeDiscount or absoluteDiscount may be set; got X a
 
 On a read, each entry additionally returns `pricing_variant`, `base_price` and `resolved_price`, so a client does not compute the discount itself. See [`types/resolved-price.md`](./types/resolved-price.md).
 
-## Displaying a discounted price in the EEA
+## Displaying a discounted price in the affected EEA regions
 
 **Your client must apply this.** Nothing in the service enforces it.
 
-In the European Economic Area, a buyer must be shown **only the discounted price**, with no strikethrough of the original. Both `base_price` and `resolved_price` are returned on every region so that a seller-facing surface can show what each region pays, but a buyer-facing surface in an affected region must present `resolved_price` alone.
+In the regions listed below, a buyer on a discounted offer must be shown **only the discounted price, with no mention of the offer at all** — no strikethrough, no "was X, now Y", and no badge or label announcing a discount. Showing the discounted figure alone is what the rule requires; anything that reveals a reduction took place does not satisfy it, even without a strikethrough.
 
-Which regions are affected depends on the purchase option's `withdrawalRightType`: one list applies to digital content, another to digital services. See [`types/withdrawal-right-type.md`](./types/withdrawal-right-type.md).
+This applies only to the regions named here, not to every EEA member state. **The two lists are not the same, and neither contains the other** — digital services adds `HU` and `NL`, digital content adds `EE` — so you must know a purchase option's classification before you can apply the rule at all.
+
+| Classification | `withdrawalRightType` | Regions |
+|---|---|---|
+| Digital content | `WITHDRAWAL_RIGHT_DIGITAL_CONTENT` | `BE`, `HR`, `CZ`, `DK`, `EE`, `FR`, `GR`, `LV`, `PL`, `SE` |
+| Digital service | `WITHDRAWAL_RIGHT_DIGITAL_SERVICE` | `BE`, `HR`, `CZ`, `DK`, `FR`, `GR`, `HU`, `LV`, `NL`, `PL`, `SE` |
+
+Both `base_price` and `resolved_price` are returned on every region, deliberately, so that a seller-facing surface can show what each region pays. A buyer-facing surface in an affected region must present `resolved_price` alone.
+
+`withdrawalRightType` is never absent from a read: when a seller sets nothing, the response carries Google's documented default, `WITHDRAWAL_RIGHT_DIGITAL_CONTENT`. See [`types/withdrawal-right-type.md`](./types/withdrawal-right-type.md).
 
 ## Where the base price lives
 
@@ -359,6 +368,8 @@ Four are available, but on the **seller management surface** (`/sellers/{uid}/�
 - `get`: reads one one-time product.
 - `delete`: deletes one one-time product.
 - `batchDelete`: deletes several one-time products.
+
+These four are named here for completeness but are **not yet documented in detail** — there is no page for them in this repository. The offer and purchase-option endpoints on the same surface are documented, in [`offers/README.md`](./offers/README.md) and [`purchase-options/README.md`](./purchase-options/README.md).
 
 Two are not implemented on any surface:
 

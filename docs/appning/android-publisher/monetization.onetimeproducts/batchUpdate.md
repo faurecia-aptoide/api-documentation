@@ -125,6 +125,21 @@ Within a purchase option named by the `updateMask`:
 
 Send the complete intended state for every purchase option you name. A partial list is a deletion.
 
+### The legacy flat discount cannot be combined with `offers[]`
+
+**(Appning.)** Two ways of expressing promotional pricing exist on a purchase option. Earlier clients send a flat `discount` block with a `timeWindow`; current clients author `offers[]` with per-region overrides.
+
+Sending both on one purchase option is a `400`:
+
+```
+The flat `discount` block cannot be combined with `offers[]`. Express promotional pricing
+per region inside `offers[].regionalPricingAndAvailabilityConfigs[]` and remove `discount`.
+```
+
+Writing `offers[]` also **clears** any flat `discount`, `fullPriceMicros` and `timeWindow` previously stored on that option, rather than leaving them stale.
+
+Use `offers[]`. The flat block is the older shape and is documented here only so an integrator recognises the error.
+
 ## Response body
 
 ```json

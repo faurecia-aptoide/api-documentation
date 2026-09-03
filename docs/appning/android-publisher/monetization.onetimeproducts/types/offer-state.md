@@ -39,6 +39,8 @@ An `ACTIVE` offer whose promotion has ended is not sellable. A scheduled `DRAFT`
 
 Seller-facing reads do not apply either condition, so an operator can still see and correct a draft or expired offer.
 
+An offer created through the older flat `discount` / `timeWindow` shape carries that legacy window as well, and it is enforced in addition to the two conditions above — such an offer must satisfy every window it carries. An offer authored through `offers[]` never carries one.
+
 ## Local references
 
 - [`../monetization.onetimeproducts.md`](../monetization.onetimeproducts.md)

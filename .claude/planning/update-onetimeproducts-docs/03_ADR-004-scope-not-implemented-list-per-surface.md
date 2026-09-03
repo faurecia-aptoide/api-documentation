@@ -40,6 +40,14 @@ This is the one edit in the ticket that changes text the audit certified as corr
 - **Negative:** touches text the audit blessed, which must be called out on the ticket rather than buried in a diff — the reviewer needs to see it deliberately.
 - **Risks:** the reasoning behind the original six could not be verified, because the audit artefacts it came from (`05-batch-update.md`, `08-divergences.md`) are not in any local repository and were requested on the ticket. If they turn out to have scoped the list some other way, this decision may need revisiting.
 
+## Implementation note (added during review, 2026-09-03)
+
+The decision above says the available-on-the-seller-surface group would be listed "with a relative link per method". **That was only delivered for the offer- and purchase-option-level methods**, which each have a page. The four **product**-level methods (`list`, `get`, `delete`, `batchDelete`) are named in plain text with no link, because no pages for them exist — writing them was never in the ticket's scope and was correctly left off the implementation plan.
+
+The page now says so explicitly rather than leaving a reader to wonder why four announced methods lead nowhere. Building them out is recorded as a follow-up, not a silent omission.
+
+The wording "cross-linked" in the ticket's closing comment overstated this and was corrected.
+
 ## References
 
 - `02_CODE_RESEARCH.md` §4.3 (Google method coverage), §7.2 decision 2

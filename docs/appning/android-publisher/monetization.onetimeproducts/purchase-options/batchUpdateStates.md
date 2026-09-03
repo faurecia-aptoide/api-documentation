@@ -31,6 +31,7 @@ The cross-product form is an Appning extension. Google scopes this method under 
 - Method: `POST`
 - Per-product URL: `https://product.faa.faurecia-aptoide.com/api/8.20240517/sellers/{uid}/inapp/oneTimeProducts/{productId}/purchaseOptions:batchUpdateStates`
 - Cross-product URL: `https://product.faa.faurecia-aptoide.com/api/8.20240517/sellers/{uid}/inapp/oneTimeProducts/purchaseOptions:batchUpdateStates`
+- Sandbox: the same two paths on `https://product-sandbox.faa.faurecia-aptoide.com/api/8.20240517/`
 
 ## Path parameters
 

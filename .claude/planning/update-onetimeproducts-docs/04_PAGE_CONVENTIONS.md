@@ -31,6 +31,8 @@ Adapted from:
 
 `<Kind>` is one of `Method`, `REST Resource`, `Schema`, `Enum` — matching the existing pages exactly.
 
+**One deliberate exception:** `types/resolved-price.md` is headed `# Schema: resolved price` — plain words, no backticks — because "resolved price" is a shape described across several fields, not a named wire type. Do not "correct" it to a backticked identifier that does not exist on the wire.
+
 ---
 
 ## 2. Surface preamble

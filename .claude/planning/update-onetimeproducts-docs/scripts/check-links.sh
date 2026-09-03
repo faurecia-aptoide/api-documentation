@@ -29,5 +29,14 @@ if [ -f /tmp/.linkfail.$$ ]; then
   echo "FAIL: $n broken relative link(s)"
   exit 1
 fi
+# Warn on a "See `something`" that is code-formatted but not a link. This is the
+# shape a deferred forward reference leaves behind when the link is never
+# restored — invisible to the check above, because it is not link syntax at all.
+unlinked=$(grep -rnE 'See `[a-zA-Z0-9_.-]+`( for| in|,|\.)' docs README.md 2>/dev/null || true)
+if [ -n "$unlinked" ]; then
+  echo "$unlinked"
+  echo "WARN: code-formatted reference(s) after \"See\" that are not links — should these be links?"
+fi
+
 echo "PASS: all relative links resolve"
 exit 0

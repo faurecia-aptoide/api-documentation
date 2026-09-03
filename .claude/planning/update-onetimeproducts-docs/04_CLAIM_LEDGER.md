@@ -50,7 +50,9 @@ The ticket requires that nothing previously correct is changed without a code ch
 | C1 | The `<details>` list of six "not implemented" methods is retitled, scoped to the v3 surface, and split into "available on the seller surface" and "not implemented anywhere" | The list was **unscoped**, not wrong. Four of the six are implemented on the seller surface. A reader took it as "the API does not offer these", which is now false | `routes/api.php:195-197`, `:294-297` (list/get/delete/batchDelete on the seller surface); no route matches `oneTimeProducts:batchGet` or a `patch` on this resource. Decision recorded in ADR-004 |
 | C2 | **Found during implementation, not in the ticket.** The request-body example's `latencyTolerance` value, and the bullet "Default is latency-sensitive" | The page's own example was **invalid**: this service accepts only `…UNSPECIFIED` and `…LATENCY_TOLERANT` and rejects `…LATENCY_SENSITIVE` with a 400. An integrator copying the documented example received an error. The default is `UNSPECIFIED`, not latency-sensitive | `app/Dto/Internal/AndroidPublisher/BatchUpdateItem.php:44-47` (allowed list), `:56` (default), `:967-974` (rejection) |
 
-C2 is a divergence the audit did not find, in the document it certified as divergence-free. It is the clearest evidence that the per-claim verification this ticket asks for was worth doing.
+| C3 | **Found during review, not in the ticket.** `types/withdrawal-right-type.md` published two wire values that do not exist: `WITHDRAWAL_RIGHT_TYPE_UNSPECIFIED` (an extra `TYPE_`) and `WITHDRAWAL_RIGHT_SERVICE` (missing `DIGITAL_`) | A caller copying `WITHDRAWAL_RIGHT_SERVICE` from the documentation is rejected. The enum mirrors Google's names exactly and carries no note of local renaming, so these are errors, not divergences. The page also did not say `WITHDRAWAL_RIGHT_UNSPECIFIED` is accepted-then-rejected on a write | `app/Enums/WithdrawalRightType.php:57`, `:60`, `:63`; rejection at `:38-45` |
+
+C2 and C3 are both divergences the audit did not find, in the document it certified as divergence-free. Two of the three certified-text corrections were found by verification passes rather than by the audit — and C3 surfaced only in review, after the implementation's own closing audit had reported clean.
 
 ---
 
@@ -184,7 +186,7 @@ One row per published cap, enum vocabulary, bound, formula, status code and erro
 | P7-04 | `offers/offer-token-flow.md` | A resolved token records the purchase option and offer on the purchase | **Appning** | write time | `database/migrations/forward/product/2026_09_01_120000_add_offer_identity_to_purchases.php`; `app/Services/ApplicationPurchaseService.php:130-132`, `:160` | `verified` |
 | P7-05 | `offers/offer-token-flow.md` | `redemptionLimit` enforced per buyer at purchase time; 403 at the cap | Google | purchase time | `app/Services/Offer/RedemptionLimitGuard.php:209-214`; called `ApplicationPurchaseService.php:158` | `verified` |
 | P7-06 | `offers/offer-token-flow.md` | `0` is unlimited and short-circuits the check | Google | purchase time | `RedemptionLimitGuard.php:183-187` | `verified` |
-| P7-07 | `offers/offer-token-flow.md` | A refunded, charged-back or cancelled purchase stops counting | **Appning** | purchase time | `app/Support/Offers/RedemptionCountRule.php:96-109` | `verified` |
+| P7-07 | `offers/offer-token-flow.md` | Two independent exclusions: the purchase's own status is `VOIDED`, **or** its latest order is `REFUNDED`/`CHARGEDBACK`/`CANCELED`. A purchase with no orders **does** count, because the alternative fails open | **Appning** | purchase time | `app/Support/Offers/RedemptionCountRule.php:96-109`, `:102-106` | `verified` |
 | P7-08 | `offers/offer-token-flow.md` | Merchandising control, **not** a security control — a caller omitting the token is not counted | **Appning** | n/a | `RedemptionLimitGuard.php:24-46` | `verified` |
 | P7-09 | `offers/offer-token-flow.md` | The catalogue still returns an offer whose limit a buyer has reached; refusal is at purchase time only | **Appning** | n/a | `OneTimeProductResource.php:286-291` | `verified` |
 | P7-10 | `offers/offer-token-flow.md` | No token-lookup endpoint exists or is planned; resolution is a catalogue re-read plus string match | **Appning** | n/a | no route matches `offerToken` in `routes/api.php`; ADR-0139 R2 | `verified` |
@@ -196,8 +198,22 @@ One row per published cap, enum vocabulary, bound, formula, status code and erro
 | P7-16 | `offers/offer-token-flow.md` | Not a signed price and not an authorisation; trust comes from the catalogue being the price authority | **Appning** | n/a | `app/Support/Offers/OfferToken.php:20-26` | `verified` |
 | P7-17 | `offers/offer-token-flow.md` | **Status:** no shipped broker forwards the token to this service today | **Appning** | n/a | `RedemptionLimitGuard.php:35-55`; no outbound body field in either broker repo | `verified` |
 | P7-18 | resource page | EEA: buyer must see only the discounted price, no strikethrough; unenforced by the service; region list selected by `withdrawalRightType` | **Appning** (obligation) | not enforced | `docs/api/v8-one-time-products.openapi.yaml:83-99`; `docs/architecture/one-time-products.md:441-450` | `verified` |
+| R-01 | resource page, `types/withdrawal-right-type.md` | The EEA display rule covers two specific, non-nesting region lists — content: BE HR CZ DK EE FR GR LV PL SE; services: BE HR CZ DK FR GR HU LV NL PL SE | Google | not enforced | `docs/api/v8-one-time-products.openapi.yaml:83-99`; `docs/architecture/one-time-products.md:441-455` | `verified` |
+| R-02 | resource page | The obligation is "no mention of the offer" — no strikethrough **and** no "was X now Y"; not strikethrough alone | Google | not enforced | `docs/api/v8-one-time-products.openapi.yaml:83-92` | `verified` |
+| R-03 | resource page, `types/withdrawal-right-type.md` | `withdrawalRightType` is never absent from a read; unset is served as `WITHDRAWAL_RIGHT_DIGITAL_CONTENT` | Google | n/a | `app/Enums/WithdrawalRightType.php:68-75`; `docs/api/v8-one-time-products.openapi.yaml:93-99` | `verified` |
+| R-04 | `types/withdrawal-right-type.md` | The three values are `WITHDRAWAL_RIGHT_UNSPECIFIED`, `WITHDRAWAL_RIGHT_DIGITAL_CONTENT`, `WITHDRAWAL_RIGHT_DIGITAL_SERVICE` | Google | n/a | `app/Enums/WithdrawalRightType.php:57`, `:60`, `:63` | `verified` |
+| R-05 | `types/withdrawal-right-type.md` | `WITHDRAWAL_RIGHT_UNSPECIFIED` is accepted on the wire then rejected on a write; omit the field instead | **Appning** | write time | `app/Enums/WithdrawalRightType.php:38-45`, `:54-57` | `verified` |
+| R-06 | `types/withdrawal-right-type.md` | Nested per purchase option at `taxAndComplianceSettings.withdrawalRightType`, not at product level | Google | write time | `app/Enums/WithdrawalRightType.php:30-36` | `verified` |
+| R-07 | `batchUpdate.md` | The flat `discount` block cannot be combined with `offers[]` — 400, with the message naming `offers[]` as the survivor | **Appning** | write time | `app/Dto/Internal/AndroidPublisher/BatchUpdateItem.php:903-910` | `verified` |
+| R-08 | `batchUpdate.md` | Writing `offers[]` clears any stored flat `discount`, `fullPriceMicros` and `timeWindow` on that option | **Appning** | write time | `app/Services/AndroidPublisher/BatchUpdateService.php:876-882` | `verified` |
+| R-09 | `types/offer-state.md` | An offer carrying the legacy `timeWindow` must satisfy that window too; an offer authored through `offers[]` never carries one | **Appning** | read time | `app/Models/Offer.php:126-153`; `BatchUpdateService.php:766`, `:881` | `verified` |
 
 ---
+
+## Known documentation gaps, recorded rather than left implicit
+
+1. **The legacy flat `discount` / `timeWindow` write blocks are accepted but not documented as fields.** Only the error they produce when combined with `offers[]` is documented (`R-07`), plus their effect on the schedule (`R-09`). They are an Appning legacy shape being phased out behind a rejection flag, and documenting them fully would advertise a path new integrators should not take. If the team wants them documented, that is a follow-up ticket.
+2. **The four product-level Console methods** (`list`, `get`, `delete`, `batchDelete` under `/sellers/{uid}/inapp/oneTimeProducts`) are named on the resource page but have no pages. Out of scope for PAY-1889; the page now says so explicitly.
 
 ## Re-verification instructions
 

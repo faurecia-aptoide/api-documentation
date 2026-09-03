@@ -143,3 +143,63 @@ The deliverable is substantively strong — 135 independently-citable claims, th
 1. Harden `check-links.sh` to flag a bare-code forward reference following "See " (§3).
 2. Resolve whether `time_window` gates sellability on the new write path (#7) and add a line to `types/offer-state.md` if so.
 3. Add the resolved-price heading exception to `04_PAGE_CONVENTIONS.md §1` (#6).
+
+
+---
+
+# Re-review after fixes (same day)
+
+**Reviewed:** the fix commit on top of `0c8793f`. All five required changes applied; every one re-verified against `origin/staging` `c4dd77a`.
+
+## Required changes — status
+
+| # | Change | Verification |
+|---|---|---|
+| 1 | EEA rule corrected | Now states "no mention of the offer at all — no strikethrough, no 'was X, now Y', and no badge or label announcing a discount", and both region lists are published as a table on the resource page **and** on `types/withdrawal-right-type.md`. **All 42 country codes across both pages were diffed mechanically against the source lists — exact match, 10 content / 11 services**, including the non-nesting detail (`EE` content-only, `HU`/`NL` services-only) |
+| 2 | Dead reference linked | `See [`offer-token-flow.md`](../offers/offer-token-flow.md)`. Zero remaining bare-code "See" references anywhere in `docs/` |
+| 3 | `VOIDED` exclusion added | Page now states the two independent exclusions, plus the "no orders yet still counts" rule that the original omitted as well. Ledger row `P7-07` corrected to match |
+| 4 | Sandbox host | **9/9** endpoint pages now carry it |
+| 5 | "Cross-linked" claim | Resource page now says the four product-level methods are "not yet documented in detail — there is no page for them in this repository", and points to the two surfaces that are. `03_ADR-004` carries an implementation note recording the deviation from its own stated design and why |
+
+## Found and fixed during the fix pass
+
+**C3 (would have been Critical). `types/withdrawal-right-type.md` published two wire values that do not exist.** `WITHDRAWAL_RIGHT_TYPE_UNSPECIFIED` (an extra `TYPE_`) and `WITHDRAWAL_RIGHT_SERVICE` (missing `DIGITAL_`). The enum mirrors Google's names exactly and carries no note of local renaming, so these were plain errors: a caller copying `WITHDRAWAL_RIGHT_SERVICE` out of the documentation gets a 400. Now corrected to the three real values, verified set-equal against the enum, with the accepted-then-rejected behaviour of `WITHDRAWAL_RIGHT_UNSPECIFIED` stated.
+
+This is the **third** certified-text defect in this ticket (after the not-implemented list and the `latencyTolerance` example), and the second found by a verification pass rather than by the original audit. It surfaced only because fix #1 required editing that page — which is an uncomfortable observation about coverage: the page was in scope for the audit, was never flagged, and was not touched by the implementation until a review finding forced it open.
+
+**A missing write-contract rule.** Investigating recommendation #7 established that the legacy flat `discount`/`timeWindow` shape is mutually exclusive with `offers[]` and that sending both is a 400 — an error an integrator can hit that no page documented. Added to `batchUpdate.md` with the verbatim message, along with the fact that writing `offers[]` clears any stored flat modifiers.
+
+## Non-blocking recommendations — status
+
+| # | Recommendation | Status |
+|---|---|---|
+| 1 | Harden `check-links.sh` against bare-code forward references | **Done.** Now warns on `See \`x\`` patterns that are not links; proven to fire on a planted defect and silent on the clean tree |
+| 2 | Resolve whether `time_window` gates sellability | **Resolved, not deferred.** It does, and it is reachable — but only through the legacy option-level block, never through `offers[]` (authored offers are written with a null window). Noted on `types/offer-state.md` |
+| 3 | Record the `resolved-price` heading exception | **Done**, in `04_PAGE_CONVENTIONS.md §1`, phrased so a future author does not "correct" it into a backticked identifier that does not exist on the wire |
+
+## Two gaps recorded rather than closed
+
+Written into the ledger so they are explicit rather than implied:
+
+1. The legacy flat `discount`/`timeWindow` blocks are accepted but not documented as fields — only the error they produce and their effect on the schedule. Documenting them fully would advertise a path new integrators should not take; a follow-up ticket if the team wants it.
+2. The four product-level Console methods have no pages. Out of scope for PAY-1889, and the page now says so.
+
+## Gates
+
+| Gate | Result |
+|---|---|
+| check-links / check-leakage / check-index-parity | **PASS** |
+| Ledger | **144 rows, 0 pending**, 3 certified-text changes recorded |
+| EEA country-code transcription | **42/42 exact match** against source |
+| `WithdrawalRightType` values | **3/3 set-equal** against the enum |
+| XOR error message | **verbatim** against source |
+| NFR-02 page budget | PASS — none over |
+| TR-16 renames | **0** across all commits |
+
+## Verdict: ✓ APPROVED
+
+All five required changes are applied and independently verified. The fix pass additionally caught and corrected a third certified-text defect (C3) that neither the original audit nor the implementation's closing pass had found, resolved all three non-blocking recommendations rather than deferring them, and recorded the two remaining scope gaps explicitly instead of leaving them silent.
+
+One honest note carried forward rather than dressed up: C3 was found by accident — because fix #1 happened to require opening that file. Nothing in this ticket's process would have caught it otherwise, since the page was outside the diff and its numbers were never in the ledger. The `04_CLAIM_LEDGER.md` re-verification instructions now matter more than the passing gate count: pages this ticket did not touch have never been verified against code at all, and two of the three defects found so far were in exactly that category.
+
+**Recommended follow-up (new, beyond this ticket):** run the same per-claim verification over the `types/` pages this ticket never opened (`money.md`, `offer-tag.md`, `product-update-latency-tolerance.md`, `regional-product-age-rating-info.md`, `regions-version.md`, `restricted-payment-countries.md`, `streaming-tax-type.md`, `tax-tier.md`). Three defects in the audited set is a rate high enough to justify checking the rest.

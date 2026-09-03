@@ -9,7 +9,7 @@
 - [x] Design - Completed
 - [x] Planning - Completed
 - [x] Implementation - Completed (20 new pages, 4 modified, 135 verified claims, 6 commits)
-- [~] Review - NEEDS REVISION (1 critical, 4 important, 3 suggestions — see 06_CODE_REVIEW.md)
+- [x] Review - APPROVED after fixes (1 critical + 4 important resolved; C3 found and fixed during the fix pass; all 3 recommendations closed)
   - Phase 1 Conventions + harness: ✓ Complete
   - Phase 2 Type pages: ✓ Complete (8 pages, 31 ledger rows)
   - Phase 3 v3 surface: ✓ Complete (2 pages patched, 47 ledger rows)

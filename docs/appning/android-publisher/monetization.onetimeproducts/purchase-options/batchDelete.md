@@ -16,6 +16,7 @@ Deletes purchase options permanently.
 
 - Method: `POST`
 - URL: `https://product.faa.faurecia-aptoide.com/api/8.20240517/sellers/{uid}/inapp/oneTimeProducts/{productId}/purchaseOptions:batchDelete`
+- Sandbox: `https://product-sandbox.faa.faurecia-aptoide.com/api/8.20240517/sellers/{uid}/inapp/oneTimeProducts/{productId}/purchaseOptions:batchDelete`
 
 **Per-product only.** There is deliberately no cross-product form: this is a permanent delete, and a cross-product variant would let one request remove options across a seller's whole catalogue.
 

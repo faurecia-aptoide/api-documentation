@@ -32,7 +32,8 @@ An offer may set `redemptionLimit`. When a resolved token points at an offer who
 
 - `0` means unlimited. Otherwise the value is `1` to `50`.
 - The range is checked when the offer is written. The count is enforced at purchase time.
-- A purchase stops counting towards the limit if it is refunded, charged back or cancelled.
+- A purchase stops counting towards the limit in either of two independent cases: the purchase itself was **voided**, or its latest order was **refunded, charged back or cancelled**.
+- A purchase that has no orders yet **does** count. A limit resolves ambiguity by counting, because the alternative would let the cap be bypassed.
 - **It is a merchandising control, not a security control.** A caller that sends no `offer_token` is not counted at all, so do not rely on it to enforce entitlement scarcity.
 - The catalogue keeps returning an offer whose limit a buyer has reached. The refusal happens at purchase time, not at read time.
 

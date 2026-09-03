@@ -16,6 +16,7 @@ Deletes offers permanently.
 
 - Method: `POST`
 - URL: `https://product.faa.faurecia-aptoide.com/api/8.20240517/sellers/{uid}/inapp/oneTimeProducts/{productId}/purchaseOptions/{purchaseOptionId}/offers:batchDelete`
+- Sandbox: `https://product-sandbox.faa.faurecia-aptoide.com/api/8.20240517/sellers/{uid}/inapp/oneTimeProducts/{productId}/purchaseOptions/{purchaseOptionId}/offers:batchDelete`
 
 ## Path parameters
 
