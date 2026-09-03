@@ -8,7 +8,15 @@
 - [x] Research - Completed
 - [x] Design - Completed
 - [x] Planning - Completed
-- [ ] Implementation - Not started
+- [~] Implementation - In Progress (Phase 3/8)
+  - Phase 1 Conventions + harness: ✓ Complete
+  - Phase 2 Type pages: ✓ Complete (8 pages, 31 ledger rows)
+  - Phase 3 v3 surface: ✓ Complete (2 pages patched, 47 ledger rows)
+  - Phase 4 Offer resource + reads: ⏳ Not started
+  - Phase 5 Offer lifecycle writes: ⏳ Not started
+  - Phase 6 Purchase-option states: ⏳ Not started
+  - Phase 7 offer_token flow: ⏳ Not started
+  - Phase 8 Verification + closure: ⏳ Not started
 - [ ] Review - Not started
 - [ ] Security - Not started
 - [ ] Deploy - Not started
@@ -36,6 +44,10 @@ Documentation-only repository (Markdown + one Bash smoke-test script). No linter
 - **No portal change is needed.** `appning-documentation` serves this repo's Markdown at request time from a git-ignored directory populated at deploy. Filenames become navigation labels; the file tree becomes the URL tree.
 - **Neither OpenAPI spec is usable as a source** — four verified schema drifts, with prose and schema disagreeing inside the same file.
 - **In-repo prose lags its own code, repeatedly** — nine stale claims found across architecture notes, docblocks, route comments and both specs. Cite the parser, enum, route or migration; never an ADR or docblock.
+
+## Found During Implementation
+- **A second change to audit-certified text was necessary, and it is a divergence the audit missed.** The published request-body example on `batchUpdate.md` used `latencyTolerance: PRODUCT_UPDATE_LATENCY_TOLERANCE_LATENCY_SENSITIVE`, which this service **rejects with 400** — it accepts only `…UNSPECIFIED` and `…LATENCY_TOLERANT`. The bullet "Default is latency-sensitive" was also wrong; the default is `UNSPECIFIED`. An integrator copying the documented example got an error. Corrected in Phase 3, recorded as C2 in the claim ledger, to be raised on the ticket.
+- Forward links are deferred to the phase that creates their target, in both Phase 2 and Phase 3 — a page never links to a target that does not exist. Phases 4 and 6 add the links back into the resource page.
 
 ## Design Decisions (ADRs)
 - **ADR-001 — Page structure by surface, additive.** Directory per surface (`offers/`, `purchase-options/`), one page per endpoint, surface preamble on every page. **No existing file is moved** — portal URLs mirror file paths, so a rename breaks live links and the root endpoint table.

@@ -41,6 +41,19 @@ Recorded first, because these are the ticket assertions the code contradicts. Ea
 
 ---
 
+## Changes to text the audit certified as correct
+
+The ticket requires that nothing previously correct is changed without a code check. Two changes were made, both after checking the code. Both are declared on PAY-1889.
+
+| # | Change | Why | Evidence @ `c4dd77a` |
+|---|---|---|---|
+| C1 | The `<details>` list of six "not implemented" methods is retitled, scoped to the v3 surface, and split into "available on the seller surface" and "not implemented anywhere" | The list was **unscoped**, not wrong. Four of the six are implemented on the seller surface. A reader took it as "the API does not offer these", which is now false | `routes/api.php:195-197`, `:294-297` (list/get/delete/batchDelete on the seller surface); no route matches `oneTimeProducts:batchGet` or a `patch` on this resource. Decision recorded in ADR-004 |
+| C2 | **Found during implementation, not in the ticket.** The request-body example's `latencyTolerance` value, and the bullet "Default is latency-sensitive" | The page's own example was **invalid**: this service accepts only `…UNSPECIFIED` and `…LATENCY_TOLERANT` and rejects `…LATENCY_SENSITIVE` with a 400. An integrator copying the documented example received an error. The default is `UNSPECIFIED`, not latency-sensitive | `app/Dto/Internal/AndroidPublisher/BatchUpdateItem.php:44-47` (allowed list), `:56` (default), `:967-974` (rejection) |
+
+C2 is a divergence the audit did not find, in the document it certified as divergence-free. It is the clearest evidence that the per-claim verification this ticket asks for was worth doing.
+
+---
+
 ## Published claims
 
 One row per published cap, enum vocabulary, bound, formula, status code and error string. Filled per phase; a page may not merge while any of its rows is `pending`.
@@ -79,7 +92,53 @@ One row per published cap, enum vocabulary, bound, formula, status code and erro
 | P2-30 | `types/offer-token.md` | Stable across reads; no expiry inside the token | Appning | n/a | `OfferToken.php:62-66` | `verified` |
 | P2-31 | `types/offer-token.md` | Present on the catalogue and seller detail reads; **absent** from the seller offers list and `offers:batchGet` | Appning | n/a | `OneTimeProductResource.php:246`; `app/Http/Controllers/Api/Seller/OneTimeProducts/OfferReadController.php:114-133` | `verified` |
 
-<!-- Phase 3 rows: batchUpdate.md, monetization.onetimeproducts.md -->
+| P3-01 | `batchUpdate.md` | Batch size 100 items | Google | request boundary | `app/Http/Controllers/Api/AndroidPublisher/V3/BatchUpdateController.php:28`, `:65-68` | `verified` |
+| P3-02 | `batchUpdate.md` | `PURCHASE_OPTIONS_MAX = 100` per product | **Appning** | write time | `BatchUpdateItem.php:118`, enforced `:615-623` | `verified` |
+| P3-03 | `batchUpdate.md` | `OFFERS_PER_OPTION_MAX = 100` per purchase option | **Appning** | write time | `BatchUpdateItem.php:120`, enforced `:1859-1867` | `verified` |
+| P3-04 | `batchUpdate.md` | `REGIONAL_CONFIGS_MAX = 400` per purchase option | **Appning** | write time | `BatchUpdateItem.php:122`, enforced `:748-756` | `verified` |
+| P3-05 | `batchUpdate.md` | The three caps above are **ours, not Google's** — Google publishes no maximum for these arrays | **Appning** | n/a | `BatchUpdateItem.php:78-88` ("These are OURS, not Google's — do not cite them as Google limits") | `verified` |
+| P3-06 | `batchUpdate.md` | Options + offers combined ≤ 100 per product | Google | write time | `app/Services/AndroidPublisher/BatchUpdateService.php:56-61` | `verified` |
+| P3-07 | `batchUpdate.md` | The combined limit is **non-regression**: over-limit writes proceed with a `warnings[]` entry when they do not increase the count; only an increase is a 400 | **Appning** | write time | `BatchUpdateService.php:613-638` | `verified` |
+| P3-08 | `batchUpdate.md` | Offer tags 20 per level, counted after de-duplication | Google | write time | `BatchUpdateItem.php:124`, `:1191-1198`, `:2108-2115`; de-dup rationale `:71-75` | `verified` |
+| P3-09 | `batchUpdate.md` | Tag content: `[a-z0-9-]`, at most 20 characters | Google | write time | `BatchUpdateItem.php:173-175` | `verified` |
+| P3-10 | `batchUpdate.md` | Ids: start with a digit or lowercase letter, `[a-z0-9-]`, at most 63 characters | Google | write time | `BatchUpdateItem.php:503-505` | `verified` |
+| P3-11 | `batchUpdate.md` | Title 55, description 200 characters | Google | write time | `BatchUpdateItem.php:63`, `:65` | `verified` |
+| P3-12 | `batchUpdate.md` | `redemptionLimit` 0 or 1–50 | Google | write time (range) | `BatchUpdateItem.php:195`, `:2025-2034`; Google's sentence quoted at `:181-183` | `verified` |
+| P3-13 | `batchUpdate.md` | An offer's own regional array has **no** count cap | **Appning** | not enforced | `BatchUpdateItem.php:2129-2225` contains no count check | `verified` |
+| P3-14 | `batchUpdate.md` | `updateMask` allowed roots: `listings`, `purchaseOptions`, `offerTags` | **Appning** (narrower) | write time | `BatchUpdateItem.php:515-519` | `verified` |
+| P3-15 | `batchUpdate.md` | `taxAndComplianceSettings`, `restrictedPaymentCountries` are **rejected**, with the "values are not stored" message | **Appning** | write time | `BatchUpdateItem.php:545-548`, `:2722-2727` | `verified` |
+| P3-16 | `batchUpdate.md` | `packageName`, `productId`, `regionsVersion` rejected as immutable or output only | Google | write time | `BatchUpdateItem.php:558-562`, `:2713-2717` | `verified` |
+| P3-17 | `batchUpdate.md` | Mask paths accept an optional `oneTimeProduct.` prefix and snake_case segments | Google | write time | `BatchUpdateItem.php:2703-2712`, `:2741-2764` | `verified` |
+| P3-18 | `batchUpdate.md` | Only `listings` and `purchaseOptions` gate parsing; an unnamed array is not read at all | Google | write time | `BatchUpdateItem.php:953-954`, `:1010`, `:1101` | `verified` |
+| P3-19 | `batchUpdate.md` | Unknown fields are rejected; at most 10 named plus a "more not listed" error; triggered by key presence | **Appning** | write time | `BatchUpdateItem.php:139`, `:2584-2609`, `:2559-2564` | `verified` |
+| P3-20 | `batchUpdate.md` | The `requests` envelope itself is not unknown-key checked | **Appning** | n/a | `BatchUpdateItem.php:229-233` | `verified` |
+| P3-21 | `batchUpdate.md` | Missing fields are reported **instead of** invalid ones — the invalid list is discarded when any field is missing | **Appning** | write time | `app/Dto/Internal/AndroidPublisher/BatchUpdateRequest.php:93-98` | `verified` |
+| P3-22 | `batchUpdate.md` | 400 `required` / 400 `badRequest` mapping, Google envelope with `location` | Google | n/a | `app/Http/Errors/ErrorCode.php:38`, `:40`, `:76-80`, `:138-140`; `app/Http/Errors/Envelope/GoogleEnvelope.php:38-45`, `:66-77` | `verified` |
+| P3-23 | `batchUpdate.md` | 429 on rate limiting | Google | request boundary | `ErrorCode.php:84`; `app/Http/Errors/FrameworkExceptionTranslator.php:77`; route on `throttle:auth` at `routes/api.php:642` | `verified` |
+| P3-24 | `batchUpdate.md` | Duplicate `productId` in one batch is an error | Google | write time | `BatchUpdateRequest.php:152-157` | `verified` |
+| P3-25 | `batchUpdate.md` | Version segment is optional; `8.` + exactly 8 digits | **Appning** | request boundary | `app/Http/Middleware/StripApiVersionPrefix.php:39`; `bootstrap/app.php:47` | `verified` |
+| P3-26 | `batchUpdate.md` | Sandbox host | **Appning** | n/a | `docs/api/v8-one-time-products.openapi.yaml:22-27` | `verified` |
+| P3-27 | `batchUpdate.md`, resource page | Writes **replace, not merge**: absent offers are deleted; region sets are delete-then-insert | **Appning** | write time | `BatchUpdateService.php:853-856`, `:884-896` | `verified` |
+| P3-28 | resource page | `latencyTolerance` accepts only `UNSPECIFIED` and `LATENCY_TOLERANT`; `LATENCY_SENSITIVE` is rejected; default is `UNSPECIFIED` | **Appning** (narrower) | write time | `BatchUpdateItem.php:44-47`, `:56`, `:967-974` | `verified` |
+| P3-29 | resource page | `purchaseOptions[].offers[]` is an Appning extension; Google uses a separate resource | **Appning** | n/a | `BatchUpdateItem.php:424-426` | `verified` |
+| P3-30 | resource page | `type` is **rejected on key presence**, with the message directing to the union | **Appning** | write time | `BatchUpdateItem.php:1234-1240` | `verified` |
+| P3-31 | resource page | `buyOption` and `rentOption` are mutually exclusive; sending both is rejected | Google | write time | `BatchUpdateItem.php:1248-1259` | `verified` |
+| P3-32 | resource page | `state` is accepted and ignored on v3, rejected on the seller surface | **Appning** | write time | `app/Http/Controllers/Api/Seller/OneTimeProducts/OneTimeProductWriteController.php:137-141`, `:145-190` | `verified` |
+| P3-33 | resource page | `multiQuantityEnabled` stored, nothing acts on it; no quantity recorded, amount not multiplied | accepted-not-enforced | not enforced | `app/Dto/Internal/AndroidPublisher/BuyOption.php:35-42`; `app/Http/Resources/OneTimeProductResource.php:119-124` | `verified` |
+| P3-34 | resource page | Boolean flags must be real booleans; `"true"` is rejected, not coerced | **Appning** | write time | `BatchUpdateItem.php:1567-1570` | `verified` |
+| P3-35 | resource page | `legacyCompatible` **is** enforced — at most one per product; 409 `AMBIGUOUS_LEGACY_OPTION` on a colliding state change | Google | write time | `BatchUpdateService.php:534`; `app/Services/Product/PurchaseOptionLifecycleService.php:140-163` | `verified` |
+| P3-36 | resource page | `newRegionsConfig` stored and served only; nothing reads it; all-or-nothing when present; `AVAILABILITY_UNSPECIFIED` rejected | accepted-not-enforced | not enforced | `app/Dto/Internal/AndroidPublisher/NewRegionsConfig.php:38-45`; `OneTimeProductResource.php:147-156`; `BatchUpdateItem.php:1374-1382` | `verified` |
+| P3-37 | resource page | Google's "`NO_LONGER_AVAILABLE` only after `AVAILABLE`" rule is **not enforced** | accepted-not-enforced | not enforced | `BatchUpdateItem.php:1384-1400` | `verified` |
+| P3-38 | resource page | Four rental/expiration combinations; compared by length not spelling; `rentalPreviewPeriod` excluded | **Appning-stricter** | write time | `app/Support/Rental/RentalPeriodMatrix.php:95-104`, `:188-216`; provenance warning `:14-33`; `BatchUpdateItem.php:1313-1315` | `verified` |
+| P3-39 | resource page | `rentalPreviewPeriod` is ours, not Google's | **Appning** | write time | `BatchUpdateItem.php:449-450` | `verified` |
+| P3-40 | resource page | Offer union: exactly one of `noOverride` / `relativeDiscount` / `absoluteDiscount`, with both error messages | Google | write time | `BatchUpdateItem.php:2245-2268`, `:2255`, `:2263-2264`; `noOverride` presence-only `:2230-2232` | `verified` |
+| P3-41 | resource page | An offer region must already be priced on the parent option | **Appning** | write time | `BatchUpdateItem.php:2193-2200` | `verified` |
+| P3-42 | resource page | Region codes: alpha-2 or numeric-3, stored verbatim, never converted; unique per offer | Google | write time | `BatchUpdateItem.php:2771-2782`, `:2175-2178` | `verified` |
+| P3-43 | resource page | `offerId` unique per option; `preOrderOffer` recognised and rejected | **Appning** | write time | `BatchUpdateItem.php:1907-1914`, `:1969-1976` | `verified` |
+| P3-44 | resource page | `offerTags` is tri-state: absent inherits, `[]` clears, a list sets | **Appning** | write time | `BatchUpdateItem.php:2069-2073`; `app/Dto/Internal/AndroidPublisher/OfferWrite.php:41-47` | `verified` |
+| P3-45 | resource page | `endTime` is exclusive and must be later than `startTime` | Google | write time | `BatchUpdateItem.php:2016-2022`; `app/Models/Offer.php:129-153` | `verified` |
+| P3-46 | resource page | The purchase option owns the base price; own rows used exclusively, else product-level fallback; never merged per region | **Appning** | read time | `OneTimeProductResource.php:418-464`, `:487` | `verified` |
+| P3-47 | resource page | `warnings[]` may accompany a 200 response | **Appning** | n/a | `BatchUpdateController.php:74`, `:85-94` | `verified` |
 <!-- Phase 4 rows: offers/ resource + reads -->
 <!-- Phase 5 rows: offers/ lifecycle writes -->
 <!-- Phase 6 rows: purchase-options/ -->
