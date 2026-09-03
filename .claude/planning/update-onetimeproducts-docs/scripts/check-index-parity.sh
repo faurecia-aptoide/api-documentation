@@ -21,10 +21,12 @@ for f in $(find "$GROUP" -name '*.md' | sort); do
   fi
 done
 
-for f in $(find "$GROUP/offers" "$GROUP/purchase-options" -name '*.md' 2>/dev/null | sort) "$GROUP/batchUpdate.md"; do
+# An endpoint page is one that documents an HTTP request. Resource, type and
+# index pages are not endpoints and do not belong in the endpoint table.
+for f in $(find "$GROUP" -name '*.md' | sort); do
   [ -f "$f" ] || continue
+  grep -q '^## HTTP request' "$f" || continue
   base=$(basename "$f")
-  [ "$base" = "README.md" ] && continue
   if ! grep -q "$base" README.md; then
     echo "MISSING FROM ROOT ENDPOINT TABLE  $f"
     fail=1

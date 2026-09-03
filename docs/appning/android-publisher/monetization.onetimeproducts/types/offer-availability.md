@@ -27,3 +27,4 @@ Purchase-option values: `AVAILABILITY_UNSPECIFIED`, `AVAILABLE`, `UNAVAILABLE` *
 ## Local references
 
 - [`../monetization.onetimeproducts.md`](../monetization.onetimeproducts.md)
+- [`../offers/offers.md`](../offers/offers.md)

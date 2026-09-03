@@ -139,8 +139,30 @@ One row per published cap, enum vocabulary, bound, formula, status code and erro
 | P3-45 | resource page | `endTime` is exclusive and must be later than `startTime` | Google | write time | `BatchUpdateItem.php:2016-2022`; `app/Models/Offer.php:129-153` | `verified` |
 | P3-46 | resource page | The purchase option owns the base price; own rows used exclusively, else product-level fallback; never merged per region | **Appning** | read time | `OneTimeProductResource.php:418-464`, `:487` | `verified` |
 | P3-47 | resource page | `warnings[]` may accompany a 200 response | **Appning** | n/a | `BatchUpdateController.php:74`, `:85-94` | `verified` |
-<!-- Phase 4 rows: offers/ resource + reads -->
-<!-- Phase 5 rows: offers/ lifecycle writes -->
+| P45-01 | `offers/*` | Seller surface paths are `/sellers/{uid}/inapp/oneTimeProducts/{productId}/purchaseOptions/{purchaseOptionId}/offers…` | **Appning** | n/a | `routes/api.php:211-220`, `:259-277` | `verified` |
+| P45-02 | `offers/*` | `{uid}` must match the token's seller; every refusal is the same 403 whether the seller exists or not | **Appning** | request boundary | `app/Http/Middleware/SellerAcl.php:36-38`, `:78` | `verified` |
+| P45-03 | `offers/*` | Errors use `{code, path, text, data}`, not the Google envelope | **Appning** | n/a | `app/Http/Errors/Envelope/AptSdkEnvelope.php:34-37`; `docs/architecture/error-envelopes.md` envelope table | `verified` |
+| P45-04 | `offers/*` | The whole seller surface is gated; a disabled endpoint 404s (published as "limited availability", per ADR-003) | **Appning** | request boundary | `config/services.php:109-129`; routes registered inside the flag check | `verified` |
+| P45-05 | `offers/offers.md` | Seller read shape: `offer_id`, `state`, `offer_tags`, `discounted_offer`, and per region only `region_code`, `availability`, `pricing_variant` — no prices, **no `offer_token`** | **Appning** | n/a | `app/Http/Controllers/Api/Seller/OneTimeProducts/OfferReadController.php:103-133` | `verified` |
+| P45-06 | `offers/offers.md` | Buyer/detail read shape carries `offer_token`, `price`, `discount`, `time_window`, `discounted_offer`, regional configs | **Appning** | n/a | `app/Http/Resources/OneTimeProductResource.php:234-270` | `verified` |
+| P45-07 | `offers/offers.md` | `discount` and `time_window` are projections for older clients; `discount` is lossy and single-region | **Appning** | n/a | `OneTimeProductResource.php:554-575` | `verified` |
+| P45-08 | `offers/offers.md` | `discounted_offer` is `null` when start, end and redemption limit are all absent | **Appning** | n/a | `OneTimeProductResource.php:318-320` | `verified` |
+| P45-09 | `offers/list.md` | `pageSize` default 50, max 1000, **coerced** not rejected | Google | request boundary | `app/Services/Product/OfferQueryService.php:47`, `:51`, `:85` | `verified` |
+| P45-10 | `offers/list.md` | `nextPageToken` key is always present, `null` on the last page | **Appning** | n/a | `OfferReadController.php:63-69` | `verified` |
+| P45-11 | `offers/list.md` | `-` wildcard on both path ids; a named option under a wildcard product is a 400 | Google (`-`), **Appning** (the 400) | request boundary | `OfferQueryService.php:53`, `:152-162` | `verified` |
+| P45-12 | `offers/list.md` | Every state is returned, `DRAFT` and `INACTIVE` included, and offers outside their window | **Appning** | n/a | `OfferReadController.php:26-28`; `OfferQueryService.php:37-43` | `verified` |
+| P45-13 | `offers/batchGet.md` | 1–100 targets; ids required in the body where the path carries `-`; duplicates rejected | Google | request boundary | `app/Http/Requests/OfferTargetsRequest.php:34`, `:44-52`, `:92-108`, `:113-120` | `verified` |
+| P45-14 | `offers/batchGet.md` | Response order matches request order | **Appning** | n/a | `OfferQueryService.php:135-141` | `verified` |
+| P45-15 | `offers/batchGet.md` | An unresolvable offer is **absent, not a 404** | **Appning** | n/a | `OfferQueryService.php:106-111` | `verified` |
+| P45-16 | `offers/activate.md`, `deactivate.md` | No request body; target state fixed (`ACTIVE` / `INACTIVE`); 204 empty | Google | n/a | `app/Http/Controllers/Api/Seller/OneTimeProducts/OfferStateController.php:61`, `:71`, `:129-148` | `verified` |
+| P45-17 | `offers/activate.md`, `deactivate.md` | Same-state request succeeds and writes nothing | Google | write time | `app/Enums/OfferState.php:98-105`; `app/Services/Product/OfferLifecycleService.php:108-110` | `verified` |
+| P45-18 | `offers/batchUpdateStates.md` | 1–100 entries; 400 for `STATE_UNSPECIFIED`, for `CANCELLED` (own message), and for an unrecognised value | Google | request boundary | `app/Http/Requests/OfferStatesRequest.php:36`, `:52-58`, `:79-110` | `verified` |
+| P45-19 | `offers/batchUpdateStates.md` | **`DRAFT` passes validation and then fails with 409** — it is a real enum case, so it is not a 400 | **Appning** | write time | `OfferStatesRequest.php:99-110` (`tryFrom` accepts DRAFT); `app/Enums/OfferState.php:84-86` (nothing enters DRAFT); 409 at `OfferLifecycleService.php:93-102` | `verified` |
+| P45-20 | `offers/batchUpdateStates.md` | The batch is all-or-nothing, in one transaction with a row lock per offer | **Appning** | write time | `OfferLifecycleService.php:72-124`, `:74`, `:248-255` | `verified` |
+| P45-21 | `offers/batchDelete.md` | Deletion is permanent, cascades to regional configurations, and is **not** state-restricted — matching Google | Google | write time | `OfferLifecycleService.php:127-149` | `verified` |
+| P45-22 | `offers/batchDelete.md` | Deleting the last offer of an `ACTIVE` purchase option → 409 `LAST_OFFER_OF_ACTIVE_OPTION`, because the option would fall back to the legacy base price | **Appning** | write time | `OfferLifecycleService.php:178-243`, condition `:210`, `:218-222` | `verified` |
+| P45-23 | `offers/README.md`, `offers.md` | `offers.cancel` and `offers.batchUpdate` are not implemented, with their reasons | **Appning** | n/a | `routes/api.php:256-258`; `OfferStateController.php:36-40`; `docs/architecture/decisions/0138-offer-lifecycle-state.md:199-208` | `verified` |
+| P45-24 | `offers/*` | 429 on rate limiting | Google | request boundary | `app/Http/Errors/ErrorCode.php:84`; group on `throttle:auth` at `routes/api.php:88` | `verified` |
 <!-- Phase 6 rows: purchase-options/ -->
 <!-- Phase 7 rows: offer_token, redemptionLimit, EEA -->
 

@@ -41,3 +41,4 @@ See `offer-token-flow` for what a client does with the token, including the rule
 ## Local references
 
 - [`resolved-price.md`](./resolved-price.md)
+- [`../offers/offers.md`](../offers/offers.md)

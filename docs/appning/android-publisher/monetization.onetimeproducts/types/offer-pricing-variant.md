@@ -25,3 +25,4 @@ On a write you send exactly one of `noOverride`, `relativeDiscount` or `absolute
 - [`relative-discount.md`](./relative-discount.md)
 - [`absolute-discount.md`](./absolute-discount.md)
 - [`resolved-price.md`](./resolved-price.md)
+- [`../offers/offers.md`](../offers/offers.md)

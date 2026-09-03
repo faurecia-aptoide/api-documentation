@@ -6,7 +6,7 @@ Adapted from:
 
 One-time products represent digital goods in an app.
 
-> **Surface:** partner API, `/androidpublisher/v3/…`. The same resource is also written and read on the seller management API under `/sellers/{uid}/…`, where the error envelope and pagination differ — see the offer endpoint pages, added alongside the offer resource.
+> **Surface:** partner API, `/androidpublisher/v3/…`. The same resource is also written and read on the seller management API under `/sellers/{uid}/…`, where the error envelope and pagination differ — see [`offers/README.md`](./offers/README.md).
 
 ## Resource `OneTimeProduct`
 
@@ -108,7 +108,7 @@ Fields:
 - `newRegionsConfig` (`OneTimeProductPurchaseOptionNewRegionsConfig`): default pricing/availability for future new regions.
 - `offerTags[]` (`OfferTag`, optional): up to 20 custom tags.
 - `taxAndComplianceSettings` (`PurchaseOptionTaxAndComplianceSettings`, optional): tax/compliance settings.
-- `offers[]` (`OneTimeProductOffer`, optional): **(Appning)** offers authored inline on this purchase option, up to 100. Google addresses offers through a separate resource; this service nests them here, and this is the only write path for them. See the offer resource page.
+- `offers[]` (`OneTimeProductOffer`, optional): **(Appning)** offers authored inline on this purchase option, up to 100. Google addresses offers through a separate resource; this service nests them here, and this is the only write path for them. See [`offers/offers.md`](./offers/offers.md).
 - Union `purchase_option_type` (exactly one must be set):
   - `buyOption`
   - `rentOption`
@@ -351,7 +351,7 @@ Two are not implemented on any surface:
 - `batchGet`: reads one or more one-time products.
 - `patch`: creates or updates one one-time product.
 
-At the offer level, `activate`, `deactivate`, `batchUpdateStates`, `batchDelete`, `batchGet` and `list` are available on the seller management surface — see the offer endpoint pages, added alongside the offer resource. Two are not implemented:
+At the offer level, `activate`, `deactivate`, `batchUpdateStates`, `batchDelete`, `batchGet` and `list` are available on the seller management surface — see [`offers/README.md`](./offers/README.md). Two are not implemented:
 
 - `offers.cancel`: moves an offer to `CANCELLED`, which applies only to pre-order offers. Pre-orders are rejected on write here, so the method has nothing to act on.
 - `offers.batchUpdate`: unnecessary — offers are written through `oneTimeProducts:batchUpdate`.

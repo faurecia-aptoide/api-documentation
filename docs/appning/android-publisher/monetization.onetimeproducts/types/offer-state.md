@@ -43,3 +43,4 @@ Seller-facing reads do not apply either condition, so an operator can still see 
 
 - [`../monetization.onetimeproducts.md`](../monetization.onetimeproducts.md)
 - [`purchase-option-state.md`](./purchase-option-state.md)
+- [`../offers/offers.md`](../offers/offers.md)
