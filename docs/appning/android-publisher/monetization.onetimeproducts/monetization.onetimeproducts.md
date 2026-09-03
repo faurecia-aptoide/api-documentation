@@ -221,7 +221,7 @@ For the allowed transitions between these states, see [`types/purchase-option-st
 - `eurPrice` (`Money`, required): EUR price used for future new regions.
 - `availability` (`Availability`, required): whether this config applies to future new regions.
 
-**(accepted, not enforced.)** The whole block is stored and returned unchanged, but nothing in this service observes a new region launching, so no pricing decision reads it. Treat it as a record of intent, not a control.
+**(Accepted, not enforced.)** The whole block is stored and returned unchanged, but nothing in this service observes a new region launching, so no pricing decision reads it. Treat it as a record of intent, not a control.
 
 The block is all-or-nothing: if you send it, all three fields are required. `AVAILABILITY_UNSPECIFIED` is rejected here — send `AVAILABLE` or `NO_LONGER_AVAILABLE`.
 
@@ -271,6 +271,12 @@ Google allows `NO_LONGER_AVAILABLE` only where availability was previously `AVAI
 - `state` (`OfferState`, output only): see [`types/offer-state.md`](./types/offer-state.md). Accepted and ignored on this surface; rejected on the seller management surface.
 
 An offer never carries a price. It carries a **modifier** applied to the purchase option's price for a region.
+
+### Writes replace, they do not merge
+
+When a write names a purchase option, that option's **offer set is replaced**: an offer that exists today and is absent from your payload is **deleted**. A region set is likewise replaced rather than merged, on both a purchase option and an offer.
+
+Send the complete intended state for every purchase option you name. A partial list is a deletion.
 
 ### `DiscountedOffer`
 

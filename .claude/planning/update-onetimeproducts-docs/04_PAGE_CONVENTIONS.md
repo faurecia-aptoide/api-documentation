@@ -82,6 +82,8 @@ Appended to a field bullet, an enum value or an enforcement-table row.
 | Appning, stricter | `**(Appning — stricter than Google)**` | Google's field, our tighter rule. Never present as parity |
 | Accepted, not enforced | `**(accepted, not enforced)**` | accepted and stored, but nothing acts on it — must not be used as a control |
 
+**Punctuation:** when a marker appears inline in a field bullet, no trailing period inside the parentheses (`**(Appning)**`). When it opens a standalone paragraph, capitalise and close with a period inside (`**(Appning.)**`, `**(Accepted, not enforced.)**`). Both forms are in use and both are correct in their position.
+
 **An unmarked field asserts "this is Google's rule."** Silence is a claim, so a forgotten marker produces a *wrong* page, not an incomplete one. This is why provenance is a required ledger column: an omission shows up as an empty cell.
 
 Example bullets:

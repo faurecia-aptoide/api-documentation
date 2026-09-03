@@ -8,7 +8,7 @@
 - [x] Research - Completed
 - [x] Design - Completed
 - [x] Planning - Completed
-- [~] Implementation - In Progress (Phase 7/8)
+- [x] Implementation - Completed (20 new pages, 4 modified, 135 verified claims, 6 commits)
   - Phase 1 Conventions + harness: ✓ Complete
   - Phase 2 Type pages: ✓ Complete (8 pages, 31 ledger rows)
   - Phase 3 v3 surface: ✓ Complete (2 pages patched, 47 ledger rows)
@@ -16,7 +16,26 @@
   - Phase 5 Offer lifecycle writes: ✓ Complete (committed together — the offers index inherently lists both, 24 ledger rows)
   - Phase 6 Purchase-option states: ✓ Complete (3 pages, 15 ledger rows)
   - Phase 7 offer_token flow: ✓ Complete (1 page + EEA section, 18 ledger rows)
-  - Phase 8 Verification + closure: ⏳ Not started
+  - Phase 8 Verification + closure: ✓ Complete
+
+### Verification results
+| Gate | Result |
+|---|---|
+| Link check | PASS — every relative link resolves |
+| Leakage check | PASS — no file paths, class names, ADR numbers, flag names, hashes or perf claims |
+| Index parity | PASS — file tree matches both hand-maintained indexes |
+| Ledger coverage | 135 `verified`, **0 `pending`**, 3 `rejected`, 0 empty provenance cells |
+| Spot re-verification | **12/12** numbers re-derived from source independently of the ledger |
+| Page budget (NFR-02) | PASS — largest page 18 KB / 380 lines against a 40 KB / 500-line budget |
+| Renames (TR-16) | **0** across all six commits |
+| Structural pass | PASS — every endpoint page states URL, auth, body, success and errors |
+| Terminology / accessibility | PASS — fixed phrasings used; every table has a header row; no meaning by symbol alone |
+
+### Follow-ups (not defects)
+1. Flip the eleven "limited availability" markers to "generally available" once the Console flag values are confirmed — one line per page.
+2. Remove the `offer_token` status line once a broker forwards the token.
+3. No worked example of a full `offers[]` write payload. The repository's convention is placeholder JSON, so this is consistent rather than a gap, but an example page would help an integrator.
+4. Offer to fix the nine stale prose claims in the source repository (separate ticket).
 - [ ] Review - Not started
 - [ ] Security - Not started
 - [ ] Deploy - Not started
