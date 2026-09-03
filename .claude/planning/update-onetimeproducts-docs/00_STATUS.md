@@ -51,9 +51,8 @@ Documentation-only repository (Markdown + one Bash smoke-test script). No linter
 
 ## Key Decisions
 - **Source-of-truth branch is `web-product-service-laravel` `origin/staging` (tip `c4dd77a`), not `main`.** `main` (`9fe6ed6`) is 353 commits behind and contains none of this feature set.
-- A read-only git worktree of `origin/staging` was created for research at
-  `/private/tmp/claude-501/-Users-carlossouza-Projects-product-cluster-api-documentation/a5c2d687-646a-4b9c-8703-7371bd38dc05/scratchpad/wps-staging`.
-  It is registered in the source repo's worktree list. Keep it for Design and Implementation; remove with `git worktree remove` when the ticket closes.
+- Research, implementation and review all read the source through a **read-only detached git worktree of `origin/staging` at `c4dd77a`**, created under the local session scratchpad (path is machine-specific, so not recorded here).
+  Re-create with `git worktree add --detach <local-path> c4dd77a` from `web-product-service-laravel`, and `git worktree remove <local-path>` when finished. Pin `c4dd77a` specifically: re-verifying against a newer tip would mix two contracts in one document.
 - **Two of the ticket's three substantive claims are wrong** (verified in code):
   - `purchaseOptions[].type` is **rejected on key presence**, not accepted-and-conflicting (ADR-0135). The described asymmetry no longer exists in either direction, and the ticket's line citation points at the wrong section.
   - `redemptionLimit` **is enforced**, at purchase time, as of the branch-tip commit. It is dormant behind two gates and is explicitly not a security control. `newRegionsConfig` and `multiQuantityEnabled` do hold up as stored-only.

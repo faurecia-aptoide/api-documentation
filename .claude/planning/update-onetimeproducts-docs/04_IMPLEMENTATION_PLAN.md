@@ -7,8 +7,7 @@
 - **Total Phases:** 8
 - **Estimated Effort:** M — no code, one repository, an established page pattern; the cost is per-claim source verification, which is slow and cannot be parallelised away
 - **Dependencies:**
-  - **Hard:** the read-only worktree of `web-product-service-laravel` @ `origin/staging` `c4dd77a` at
-    `/private/tmp/claude-501/-Users-carlossouza-Projects-product-cluster-api-documentation/a5c2d687-646a-4b9c-8703-7371bd38dc05/scratchpad/wps-staging`.
+  - **Hard:** a read-only detached worktree of `web-product-service-laravel` @ `origin/staging` `c4dd77a`, created under the local session scratchpad (`git worktree add --detach <local-path> c4dd77a`; path is machine-specific, so not recorded here).
     Every ledger row cites that commit. If the worktree is removed, re-create it at the **same commit** — re-verifying against a newer tip mid-ticket would mix two contracts in one document.
   - **Soft, non-blocking:** deployed values of the two Console flags (affects only the ADR-003 marker wording), whether the broker PR merged (affects only one ADR-006 status line), and the two cited audit artefacts (affects only ADR-004's confidence). Asked on the ticket; the plan proceeds without them.
   - **Coordination:** if PAY-1888 (D1) will link to specific page paths, agree the Phase 4–7 filenames **before** Phase 4 lands. Additive-only forbids renaming afterwards.
